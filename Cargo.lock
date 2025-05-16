@@ -322,7 +322,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "zed_postgres_model_context"
+name = "zed_polar_model_context"
 version = "0.0.1"
 dependencies = [
  "serde",

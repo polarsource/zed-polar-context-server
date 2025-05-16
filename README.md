@@ -1,19 +1,17 @@
-# Zed Postgres Context Server
+# Zed Polar Context Server
 
-This extension provides a Model Context Server for Postgres, for use with the Zed AI assistant.
-
-It adds a `/pg-schema` slash command to the Assistant Panel.
+This extension provides a Model Context Server for Polar, for use with the Zed AI assistant.
 
 ## Configuration
 
-To use the extension, you will need to point the context server at a Postgres database by setting the `database_url` in your Zed `settings.json`:
+To use the extension, you will need to set a valid Polar access token in your Zed `settings.json`:
 
 ```json
 {
   "context_servers": {
-    "postgres-context-server": {
+    "polar-context-server": {
       "settings": {
-        "database_url": "postgresql://myuser:mypassword@localhost:5432/mydatabase"
+        "access_token": "polar_oat_XXX"
       }
     }
   }
@@ -22,5 +20,6 @@ To use the extension, you will need to point the context server at a Postgres da
 
 ## Usage
 
-- `/pg-schema <table-name>`: Retrieve the schema for the table with the given name.
-- `/pg-schema all-tables`: Retrieve the schemas for all tables in the database.
+Once done, enable the Polar MCP tools you need in your agent profile.
+
+Read more: https://zed.dev/docs/ai/agent-panel#profiles

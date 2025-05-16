@@ -3,18 +3,18 @@ use std::env;
 use zed::settings::ContextServerSettings;
 use zed_extension_api::{self as zed, serde_json, Command, ContextServerId, Project, Result};
 
-const PACKAGE_NAME: &str = "@zeddotdev/postgres-context-server";
-const PACKAGE_VERSION: &str = "0.1.2";
-const SERVER_PATH: &str = "node_modules/@zeddotdev/postgres-context-server/index.mjs";
+const PACKAGE_NAME: &str = "@polar-sh/sdk";
+const PACKAGE_VERSION: &str = "latest";
+const SERVER_PATH: &str = "node_modules/@polar-sh/sdk/bin/mcp-server.js";
 
-struct PostgresModelContextExtension;
+struct PolarModelContextExtension;
 
 #[derive(Debug, Deserialize)]
-struct PostgresContextServerSettings {
-    database_url: String,
+struct PolarContextServerSettings {
+    access_token: String,
 }
 
-impl zed::Extension for PostgresModelContextExtension {
+impl zed::Extension for PolarModelContextExtension {
     fn new() -> Self {
         Self
     }
@@ -29,27 +29,28 @@ impl zed::Extension for PostgresModelContextExtension {
             zed::npm_install_package(PACKAGE_NAME, PACKAGE_VERSION)?;
         }
 
-        let settings = ContextServerSettings::for_project("postgres-context-server", project)?;
+        let settings = ContextServerSettings::for_project("polar-context-server", project)?;
         let Some(settings) = settings.settings else {
-            return Err("missing `database_url` setting".into());
+            return Err("missing `access_token` setting".into());
         };
-        let settings: PostgresContextServerSettings =
+        let settings: PolarContextServerSettings =
             serde_json::from_value(settings).map_err(|e| e.to_string())?;
 
         Ok(Command {
-            command: "node".to_string(),
+            command: zed::node_binary_path()?,
             args: vec![
                 env::current_dir()
                     .unwrap()
                     .join(SERVER_PATH)
                     .to_string_lossy()
                     .to_string(),
+                "start".to_string(),
+                "--access-token".to_string(),
+                settings.access_token,
             ],
-            env: vec![
-                ("DATABASE_URL".into(), settings.database_url)
-            ],
+            env: vec![],
         })
     }
 }
 
-zed::register_extension!(PostgresModelContextExtension);
+zed::register_extension!(PolarModelContextExtension);
